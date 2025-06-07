@@ -1,125 +1,74 @@
-# Node.js File Management Tool
+# Week 3: Node.js Async Patterns Evolution
 
-A robust and efficient file management tool built using Node.js core modules. This application provides a RESTful API for managing files on the server, demonstrating best practices in Node.js development.
+Demonstrates the evolution of Node.js asynchronous patterns through three implementations of a file manager.
 
-## Important Note About Dependencies
+## Quick Overview
 
-The `node_modules` directory has been excluded from the repository due to its large size. This is a common practice in Node.js projects. To get started, you'll need to install the dependencies first.
+**File:** `src/week3_async_patterns_evolution.js`
 
-## Features
+**What's Inside:**
+- Callback-based implementation (Original Node.js pattern)
+- Promise-based implementation (ES6 pattern)
+- Async/Await implementation (Modern pattern)
 
-- Create new files with custom content
-- Read file contents
-- Delete files
-- Secure file operations with proper error handling
-- Comprehensive logging system
-- RESTful API endpoints
-- Input validation and sanitization
+## Key Implementations
 
-## Prerequisites
-
-- Node.js (v14 or higher)
-- npm (Node Package Manager)
-
-## Installation
-
-1. Clone the repository
-2. Install dependencies (this will create the node_modules directory):
-   ```bash
-   npm install
-   ```
-   This step is necessary because the `node_modules` directory is not included in the repository. The installation process will:
-   - Read the dependencies from package.json
-   - Create a new `node_modules` directory
-   - Install all required packages
-   - Generate package-lock.json (if it doesn't exist)
-
-3. Start the server:
-   ```bash
-   npm start
-   ```
-   
-For development with auto-reload:
-```bash
-npm run dev
+### 1. Callbacks (Traditional)
+```javascript
+createFile(filename, content, callback) {
+    fs.writeFile(filePath, content, 'utf8', (error) => {
+        if (error) callback(error);
+        else callback(null, result);
+    });
+}
 ```
 
-## Why node_modules is Excluded
+### 2. Promises (ES6)
+```javascript
+createFile(filename, content) {
+    return fs.writeFile(filePath, content, 'utf8')
+        .then(() => result)
+        .catch(error => { throw error; });
+}
+```
 
-The `node_modules` directory is excluded from the repository because:
-- It can be very large (often hundreds of MB)
-- It can be recreated using package.json
-- It may contain platform-specific binaries
-- It's considered a best practice to exclude it from version control
+### 3. Async/Await (Modern)
+```javascript
+async createFile(filename, content) {
+    try {
+        await fs.writeFile(filePath, content, 'utf8');
+        return result;
+    } catch (error) { throw error; }
+}
+```
 
-If you need to share this project:
-1. Share the code without `node_modules`
-2. Include package.json and package-lock.json
-3. Recipients can run `npm install` to get all dependencies
+## Why This Matters
 
-## API Endpoints
+1. **Learning Value:**
+   - Shows evolution of Node.js async patterns
+   - Demonstrates same functionality in different styles
+   - Highlights modern best practices
 
-### Create File
-- **POST** `/api/files`
-- **Body**: 
-  ```json
-  {
-    "filename": "example.txt",
-    "content": "File content here"
-  }
-  ```
-- **Response**: 201 Created with file details
+2. **Practical Applications:**
+   - Callbacks: Still found in legacy code
+   - Promises: Common in many libraries
+   - Async/Await: Current best practice
 
-### Read File
-- **GET** `/api/files/:filename`
-- **Response**: 200 OK with file content
+## How to Test
 
-### Delete File
-- **DELETE** `/api/files/:filename`
-- **Response**: 200 OK on successful deletion
-
-## Error Handling
-
-The application implements comprehensive error handling for:
-- File not found (404)
-- Invalid input (400)
-- Server errors (500)
-- File system errors
-- Permission issues
-
-## Logging
-
-All operations are logged using Winston logger, providing:
-- Operation timestamps
-- Request details
-- Error tracking
-- Success confirmations
-
-## Security Features
-
-- Input sanitization
-- Path traversal prevention
-- File size limits
-- Proper error messages without sensitive information
-
-## Testing
-
-Run tests using:
 ```bash
+# Test all implementations
 npm test
+
+# Test specific pattern
+npm test -- --grep "Callback"  # For callback version
+npm test -- --grep "Promise"   # For promise version
+npm test -- --grep "Async"     # For async/await version
 ```
 
-## Project Structure
-
-```
-├── src/
-│   ├── server.js          # Main server file
-│   ├── fileManager.js     # File operations module
-│   ├── logger.js          # Logging configuration
-│   └── utils/
-│       └── validators.js  # Input validation utilities
-├── tests/                 # Test files
-├── logs/                  # Application logs
-├── package.json
-└── README.md
-```
+## Key Features Implemented
+- File operations (create, read, delete, list)
+- Error handling for each pattern
+- Input validation
+- Security measures
+- Logging system
